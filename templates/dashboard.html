@@ -1,0 +1,5 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Painel</title>
+<link rel="stylesheet" href="/static/style.css"></head><body><main>
+<h1>Painel interno</h1><p>Bem-vindo, {{ user }}. Esta página só é acessível após autenticação.</p>
+<form method="post" action="/logout"><input type="hidden" name="csrf" value="{{ csrf_token() }}">
+<button>Sair</button></form></main></body></html>

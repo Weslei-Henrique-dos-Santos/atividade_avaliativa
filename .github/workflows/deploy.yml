@@ -1,0 +1,25 @@
+name: Deploy
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurar SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+      - name: Enviar código
+        run: |
+          rsync -az --delete --exclude '.git' --exclude '.github' --exclude 'deploy' --exclude 'venv' \
+            ./ ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/opt/projeto/app/
+      - name: Instalar dependências e reiniciar
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "/opt/projeto/venv/bin/pip install -q -r /opt/projeto/app/requirements.txt && sudo systemctl restart projeto"

@@ -1,0 +1,12 @@
+[Unit]
+Description=Projeto Aplicado (gunicorn)
+After=network.target
+[Service]
+User=deploy
+WorkingDirectory=/opt/projeto/app
+EnvironmentFile=/etc/projeto.env
+ExecStart=/opt/projeto/venv/bin/gunicorn -w 2 -b 127.0.0.1:8000 app:app
+Restart=on-failure
+NoNewPrivileges=true
+[Install]
+WantedBy=multi-user.target
